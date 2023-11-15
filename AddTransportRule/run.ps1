@@ -27,7 +27,16 @@ $Result = foreach ($Tenantfilter in $tenants) {
         Write-LogMessage -API $APINAME -tenant $tenantfilter -message "Created transport rule for $($tenantfilter)" -sev Debug
     }
     catch {
-        $_
+        $formatstring = "{0} : {1}`n{2}`n" +
+                "    + CategoryInfo          : {3}`n" +
+                "    + FullyQualifiedErrorId : {4}`n"
+        $fields = $_.InvocationInfo.MyCommand.Name,
+                  $_.ErrorDetails.Message,
+                  $_.InvocationInfo.PositionMessage,
+                  $_.CategoryInfo.ToString(),
+                  $_.FullyQualifiedErrorId
+        
+        $formatstring -f $fields
         "Could not create transport rule for $($tenantfilter): $($_.Exception.message)"
     }
 }
